@@ -18,6 +18,12 @@ class db():
 
 	def execute(self, query, args = None):
 
+		#
+		# Doing some type checking, as I got caught by this too many times.
+		#
+		if type(args) != type(None) and type(args) != type([]):
+			raise("Second argument, if present, must be a list!")
+
 		if (args):	
 			retval = self.conn.execute(query, args)
 
