@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+import argparse
+import boto3
+import json
+import logging as logger
+import logging.config
+import sys
+
+sys.path.append("lib")
+import db
+
+
+#
+# Set up the logger
+#
+logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
+
+#
+# Parse our arguments
+#
+parser = argparse.ArgumentParser(description = "Analyze crawled text")
+parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be fetching", required = True)
+parser.add_argument("-n", "--num", type = int, help = "How many tweets to fetch?", default = 5)
+args = parser.parse_args()
+
+sql = db.db()
+
+query = "SELECT rowid, username, date FROM tweets WHERE username=? AND sentiment = ''"
+results = sql.execute(query, [ args.username ] )
+
+for row in results:
+	print(row)
+
+
+comprehend = boto3.client(service_name='comprehend', region_name='us-east-1')
+
+
+text = "It is raining today in Seattle!"
+
+#print('Calling DetectSentiment')
+# http://boto3.readthedocs.io/en/latest/reference/services/comprehend.html#Comprehend.Client.detect_sentiment
+# https://docs.aws.amazon.com/comprehend/latest/dg/guidelines-and-limits.html
+#print(json.dumps(comprehend.detect_sentiment(Text=text, LanguageCode='en'), sort_keys=True, indent=4))
+#print(json.dumps(comprehend.batch_detect_sentiment(TextList=[text, text], LanguageCode='en'), sort_keys=True, indent=4))
+#print('End of DetectSentiment\n')
+
