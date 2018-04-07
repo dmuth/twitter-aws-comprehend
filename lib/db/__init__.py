@@ -10,7 +10,7 @@ class db():
 	conn = ""
 
 	def __init__(self):
-		self.conn = sqlite3.connect("posts.db")
+		self.conn = sqlite3.connect("tweets.db")
 
 		# Autocommit
 		self.conn.isolation_level = None
