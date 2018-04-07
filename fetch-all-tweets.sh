@@ -9,9 +9,9 @@
 set -e
 
 function printSyntax() {
-	echo "! "
-	echo "! Syntax: $0 username"
-	echo "! "
+	echo "! " >&2
+	echo "! Syntax: $0 username" >&2
+	echo "! " >&2
 	exit
 }
 
@@ -22,9 +22,9 @@ fi
 
 TWITTER_USER=$1
 
-echo "# "
-echo "# Fetching all recent tweets for user '$TWITTER_USER'..."
-echo "# "
+echo "# " >&2
+echo "# Fetching all recent tweets for user '$TWITTER_USER'..." >&2
+echo "# " >&2
 
 t timeline $TWITTER_USER --csv -n 5000
 
