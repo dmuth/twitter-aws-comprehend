@@ -28,7 +28,7 @@ logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
 # Parse our arguments
 #
 parser = argparse.ArgumentParser(description = "Analyze crawled text")
-parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be fetching")
+parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be fetching", required = True)
 parser.add_argument("-n", "--num", type = int, help = "How many tweets to fetch?", default = 5)
 args = parser.parse_args()
 
