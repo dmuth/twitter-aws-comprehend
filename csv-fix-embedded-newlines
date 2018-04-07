@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+#
+# Read CSV data from stdin, remove CRLFs from the tweet, and output just the tweet.
+#
+# The input for this script is the output of "t timeline username --csv", and the "t"
+# utility can be found at https://github.com/sferik/t
+#
+# BTW, if you get an error about an "uninitialized constant", there's a workaround at https://github.com/sferik/t/issues/395#issuecomment-366580898
+#
+# This is based on some code I found at:
+#    https://stackoverflow.com/questions/6556078/how-to-read-a-csv-file-from-a-stream-and-process-each-line-as-it-is-written
+#
+
+import csv
+import sys
+import re
+
+beenhere = False
+
+reader = csv.reader(sys.stdin)
+
+for row in reader:
+
+	#
+	# Skip the first line, as that is the header.
+	#
+	if not beenhere:
+		beenhere = True
+		continue
+
+	#
+	# Now remove CRLF characters.
+	#
+	tweet = row[3].replace("\n", "").replace("\r", "")
+
+	#
+	# Does the tweet start with "RT"?  It's a RT and we can ignore it.
+	#
+	if re.match(r"^RT ", tweet):
+		continue
+
+	print(tweet)
+
+
+
