@@ -1,0 +1,10 @@
+
+# Python droppings
+__pycache__
+
+# SQLite database
+tweets.db
+
+# Python dev
+virtualenv/
+
