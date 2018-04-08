@@ -42,11 +42,12 @@ def getTweetString(tweet):
 	retval += " tweet=\"%s\"" % tweet_string
 	retval += " sentiment=\"%s\"" % tweet["sentiment"]
 
-	score = json.loads(tweet["score"])
-	retval += " score_mixed=\"%.20f\"" % score["Mixed"]
-	retval += " score_negative=\"%.20f\"" % score["Negative"]
-	retval += " score_positive=\"%.20f\"" % score["Positive"]
-	retval += " score_neutral=\"%.20f\"" % score["Neutral"]
+	if tweet["score"]:
+		score = json.loads(tweet["score"])
+		retval += " score_mixed=\"%.20f\"" % score["Mixed"]
+		retval += " score_negative=\"%.20f\"" % score["Negative"]
+		retval += " score_positive=\"%.20f\"" % score["Positive"]
+		retval += " score_neutral=\"%.20f\"" % score["Neutral"]
 
 	return(retval)
 
