@@ -22,7 +22,7 @@ logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
 #
 parser = argparse.ArgumentParser(description = "Analyze crawled text")
 parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be analyzing", required = True)
-parser.add_argument("-n", "--num", type = int, help = "How many tweets to analyze?", default = 5)
+parser.add_argument("-n", "--num", type = int, help = "How many tweets to analyze? (Default: 5)", default = 5)
 parser.add_argument("--fake", action = "store_true", help = "Fake AWS calls")
 args = parser.parse_args()
 
