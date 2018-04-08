@@ -69,4 +69,12 @@ Assuming those are the case, you're good to go!  Just copy the file **splunk/twi
 Alternatively, a less convoluted way (which does not require restarting Splunk) would be to create a new dashboard, click **Edit**, click **Source**, and paste in the contents of **twitter_activity_sentiment.xml**.
 
 
+## Contact
+
+I had fun writing this, and I hope you had enjoy using this.  If there are any issues, feel
+free to file an issue against this project, <a href="http://twitter.com/dmuth">hit me up on Twitter</a>
+<a href="http://facebook.com/dmuth">or Facebook</a>, or drop me a line: **dmuth AT dmuth DOT org**.
+
+
+
 
