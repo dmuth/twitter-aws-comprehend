@@ -249,7 +249,7 @@ while True:
 		last_id = result["last_id"]
 
 	for row in result["tweets"]:
-		data_tweets.put(row["username"], row["date"], row["time_t"], row["id"], row["text"], row["profile_image"], "")
+		data_tweets.put(row["username"], row["date"], row["time_t"], row["id"], row["text"], row["profile_image"])
 		num_tweets_written += 1
 
 	if (num_tweets_left <= 0):

@@ -66,11 +66,16 @@ class data():
 	#
 	# Insert a value for a specific key.
 	#
-	def put(self, username, date, time_t, tweet_id, tweet, profile_image, sentiment):
+	def put(self, username, date, time_t, tweet_id, tweet, profile_image):
 
+		#
+		# Got the idea for this query from https://stackoverflow.com/a/4330694/196073
+		#
 		query = ("INSERT OR REPLACE INTO %s (username, date, time_t, tweet_id, tweet, profile_image, sentiment) "
-			"VALUES (?, ?, ?, ?, ?, ?, ?)" % self.table)
+			"VALUES (?, ?, ?, ?, ?, ?, COALESCE( (SELECT sentiment FROM tweets WHERE tweet_id = ?), '') )" % self.table)
 
-		self.db.execute(query, (username, date, time_t, tweet_id, tweet, profile_image, sentiment))
+		self.db.execute(query, (username, date, time_t, tweet_id, tweet, profile_image, tweet_id))
+
+
 
 
