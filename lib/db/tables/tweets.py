@@ -29,7 +29,7 @@ class data():
 
 		schema = ("username TEXT NOT NULL, date TEXT NOT NULL, time_t INTEGER, "
 			+ "tweet_id INTEGER UNIQUE NOT NULL, tweet TEXT NOT NULL, profile_image TEXT NOT NULL, "
-			+ "sentiment TEXT NOT NULL")
+			+ "sentiment TEXT NOT NULL, score TEXT NOT NULL")
 		self.db.createTable(self.table, schema)
 
 
@@ -71,10 +71,13 @@ class data():
 		#
 		# Got the idea for this query from https://stackoverflow.com/a/4330694/196073
 		#
-		query = ("INSERT OR REPLACE INTO %s (username, date, time_t, tweet_id, tweet, profile_image, sentiment) "
-			"VALUES (?, ?, ?, ?, ?, ?, COALESCE( (SELECT sentiment FROM tweets WHERE tweet_id = ?), '') )" % self.table)
+		query = ("INSERT OR REPLACE INTO %s (username, date, time_t, tweet_id, tweet, profile_image, sentiment, score) "
+			"VALUES (?, ?, ?, ?, ?, ?, "
+			"COALESCE( (SELECT sentiment FROM tweets WHERE tweet_id = ?), ''), "
+			"COALESCE( (SELECT score FROM tweets WHERE tweet_id = ?), '') "
+			")" % self.table)
 
-		self.db.execute(query, (username, date, time_t, tweet_id, tweet, profile_image, tweet_id))
+		self.db.execute(query, (username, date, time_t, tweet_id, tweet, profile_image, tweet_id, tweet_id))
 
 
 
