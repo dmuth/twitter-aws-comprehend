@@ -1,9 +1,18 @@
 # Twitter AWS Comprehend
+<img src="./img/dog-rates-twitter-sentiment-dashboard.png" width="400" align="right" />
 
 I recently learned of <a href="https://aws.amazon.com/comprehend/">Amazon Comprehend</a> and wanted
 to play around with its sentiment analysis.
 
-So I built this app to download user timelines from Twitter, send them to AWS for analysis, and visualize them in Splunk.
+So I built this app to download user timelines from Twitter, send them to AWS for analysis, and visualize them in Splunk.  The following metrics are reported:
+
+- Start and end dates for tweets
+- Number of tweets
+- A graph of "Sentiment Over Time"
+- Number of F-bombs used
+- Net Happiness Index (percent of happy tweets minus precent of unhappy tweets)
+- Top Positive and Negative tweets
+
 
 ## Requirements
 
