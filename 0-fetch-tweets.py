@@ -30,6 +30,7 @@ logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
 parser = argparse.ArgumentParser(description = "Analyze crawled text")
 parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be fetching", required = True)
 parser.add_argument("-n", "--num", type = int, help = "How many tweets to fetch?", default = 5)
+parser.add_argument("--re-auth", action = "store_true", help = "Re-authenticate against Twitter")
 args = parser.parse_args()
 
 #
@@ -46,12 +47,20 @@ data_tweets = db.tables.tweets.data(sql)
 #
 twitter_data = data.get("twitter_data")
 
-if (not twitter_data):
+if (not twitter_data or args.re_auth):
 
 	print("# ")
 
 	print("# ")
-	print("# No Twitter credentials found!")
+
+	if not twitter_data:
+		print("# No Twitter credentials found!")
+
+	if args.re_auth:
+		query = "DELETE FROM data WHERE key = 'twitter_data'"
+		sql.execute(query)
+		print("# Deleting and re-adding Twitter credentials...")
+
 	print("# ")
 	print("# The first thing we're going to need to do is get your API Key and Secret")
 	print("# You will be taken to Twitter's Apps page, and create an app if you need to.")
