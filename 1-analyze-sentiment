@@ -5,6 +5,7 @@ import boto3
 import json
 import logging as logger
 import logging.config
+import sqlite3
 import sys
 
 sys.path.append("lib")
@@ -20,28 +21,125 @@ logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
 # Parse our arguments
 #
 parser = argparse.ArgumentParser(description = "Analyze crawled text")
-parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be fetching", required = True)
-parser.add_argument("-n", "--num", type = int, help = "How many tweets to fetch?", default = 5)
+parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be analyzing", required = True)
+parser.add_argument("-n", "--num", type = int, help = "How many tweets to analyze?", default = 5)
+parser.add_argument("--fake", action = "store_true", help = "Fake AWS calls")
 args = parser.parse_args()
 
-sql = db.db()
 
-query = "SELECT rowid, username, date FROM tweets WHERE username=? AND sentiment = ''"
-results = sql.execute(query, [ args.username ] )
+#
+# Analyize a batch of tweets
+#
+# @param object comprehend - Object that lets us connect to AWS
+# @param list batch - Array of tweets
+# @param boolean fake - Are we faking calling Amazon?
+#
+# @return array An array of dictionaries where each element is the tweet_id, tweet, and sentiment.
+#
+def analyze(comprehend, batch, fake):
 
-for row in results:
-	print(row)
+	logger.info("Analyzing batch of %d tweets..." % len(batch))
+	tweets = [row["tweet"] for row in batch]
+
+	if fake:
+		#
+		# We're faking a call to AWS, which is useful for testing.
+		#
+		results = []
+		index = 0
+		for row in tweets:
+			results.append({"Index": index, "Sentiment": "TEST SE", "SentimentScore": "TEST SC"})
+			index += 1
+		pass
+
+	else:
+		results = comprehend.batch_detect_sentiment(TextList = tweets, LanguageCode='en')
+		results = results["ResultList"]
+
+	for result in results:
+
+		index = result["Index"]
+		sentiment = result["Sentiment"]
+		score = result["SentimentScore"]
+
+		batch[index]["sentiment"] = sentiment
+		batch[index]["score"] = score
+
+	return(batch)
 
 
-comprehend = boto3.client(service_name='comprehend', region_name='us-east-1')
+#
+# @param object sql Our SQLite object
+# @param list batch - Array of tweets and their sentiments
+#
+def writeResults(sql, batch):
+
+	query = "UPDATE tweets SET score=?, sentiment=? WHERE rowid=?"
+	for row in batch:
+		sql.execute(query, [ json.dumps(row["score"]), row["sentiment"], row["rowid"] ])
 
 
-text = "It is raining today in Seattle!"
 
-#print('Calling DetectSentiment')
-# http://boto3.readthedocs.io/en/latest/reference/services/comprehend.html#Comprehend.Client.detect_sentiment
-# https://docs.aws.amazon.com/comprehend/latest/dg/guidelines-and-limits.html
-#print(json.dumps(comprehend.detect_sentiment(Text=text, LanguageCode='en'), sort_keys=True, indent=4))
-#print(json.dumps(comprehend.batch_detect_sentiment(TextList=[text, text], LanguageCode='en'), sort_keys=True, indent=4))
-#print('End of DetectSentiment\n')
+#
+# Our main entry point
+#
+def main(args):
+
+	comprehend = boto3.client(service_name='comprehend', region_name='us-east-1')
+
+	#
+	# Set the database to return associative arrays
+	#
+	sql = db.db()
+	sql.conn.row_factory = sqlite3.Row
+
+	query = ("SELECT rowid, username, tweet_id, tweet FROM tweets "
+		"WHERE username=? "
+		#
+		# This allows us to run on tweets that were previously fake-analyzed.
+		#
+		"AND (sentiment = '' OR sentiment LIKE 'TEST%%') "
+		"LIMIT %d " % (args.num))
+	results = sql.execute(query, [ args.username ] )
+
+	print("# ")
+	print("# Analyzing up to %d tweets from user '%s'!" % (args.num, args.username))
+	print("# ")
+
+	batch_size = 25
+
+	batch = []
+	num_analyzed = 0
+
+	for row in results:
+	
+		if len(batch) >= batch_size:
+		
+			batch = analyze(comprehend, batch, args.fake)
+			writeResults(sql, batch)
+			num_analyzed += len(batch)
+			batch = []
+
+		batch.append({
+			"rowid": row["rowid"],
+			"tweet": row["tweet"]
+			})
+	
+	if batch:
+		batch = analyze(comprehend, batch, args.fake)
+		writeResults(sql, batch)
+		num_analyzed += len(batch)
+
+	cost = 0.0003 * num_analyzed
+	print("# ")
+	print("# Total tweets analyzed: %d" % num_analyzed)
+	print("# ")
+	print("# Total AWS Cost: $%.4f" % cost)
+	if args.fake:
+		print("# BUT--this was run with --fake, so your total cost is really ZERO! :-)")
+	print("# ")
+
+
+main(args)
+
 
