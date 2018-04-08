@@ -167,6 +167,11 @@ def getTweets(twitter, username, count, **kwargs):
 		timestamp = int(dateutil.parser.parse(row["created_at"]).timestamp())
 		date = datetime.datetime.fromtimestamp(timestamp)
 		date_formatted = date.strftime("%Y-%m-%d %H:%M:%S")
+		#
+		# Grab the 400x400 version of the profile image
+		#
+		profile_image = row["user"]["profile_image_url_https"]
+		profile_image = profile_image.replace("_normal", "_400x400")
 
 		tweet = {
 			"username": user,
@@ -174,6 +179,7 @@ def getTweets(twitter, username, count, **kwargs):
 			"time_t": timestamp,
 			"id": tweet_id, 
 			"text": tweet, 
+			"profile_image": profile_image
 			}
 
 		retval["tweets"].append(tweet)
@@ -243,7 +249,7 @@ while True:
 		last_id = result["last_id"]
 
 	for row in result["tweets"]:
-		data_tweets.put(row["username"], row["date"], row["time_t"], row["id"], row["text"], "")
+		data_tweets.put(row["username"], row["date"], row["time_t"], row["id"], row["text"], row["profile_image"], "")
 		num_tweets_written += 1
 
 	if (num_tweets_left <= 0):

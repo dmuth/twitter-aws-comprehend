@@ -28,7 +28,8 @@ class data():
 		self.db.conn.row_factory = sqlite3.Row
 
 		schema = ("username TEXT NOT NULL, date TEXT NOT NULL, time_t INTEGER, "
-			+ "tweet_id INTEGER UNIQUE NOT NULL, tweet TEXT NOT NULL, sentiment TEXT NOT NULL")
+			+ "tweet_id INTEGER UNIQUE NOT NULL, tweet TEXT NOT NULL, profile_image TEXT NOT NULL, "
+			+ "sentiment TEXT NOT NULL")
 		self.db.createTable(self.table, schema)
 
 
@@ -65,11 +66,11 @@ class data():
 	#
 	# Insert a value for a specific key.
 	#
-	def put(self, username, date, time_t, tweet_id, tweet, sentiment):
+	def put(self, username, date, time_t, tweet_id, tweet, profile_image, sentiment):
 
-		query = ("INSERT OR REPLACE INTO %s (username, date, time_t, tweet_id, tweet, sentiment) "
-			"VALUES (?, ?, ?, ?, ?, ?)" % self.table)
+		query = ("INSERT OR REPLACE INTO %s (username, date, time_t, tweet_id, tweet, profile_image, sentiment) "
+			"VALUES (?, ?, ?, ?, ?, ?, ?)" % self.table)
 
-		self.db.execute(query, (username, date, time_t, tweet_id, tweet, sentiment))
+		self.db.execute(query, (username, date, time_t, tweet_id, tweet, profile_image, sentiment))
 
 
