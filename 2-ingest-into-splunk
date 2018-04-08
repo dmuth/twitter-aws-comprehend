@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import logging as logger
+import logging.config
+import socket
+import sqlite3
+import sys
+
+sys.path.append("lib")
+import db
+
+
+#
+# Set up the logger
+#
+logging.config.fileConfig("logging_config.ini", disable_existing_loggers = True)
+
+#
+# Parse our arguments
+#
+parser = argparse.ArgumentParser(description = "Analyze crawled text")
+parser.add_argument("-u", "--username", type = str, help = "Username whose tweets we will be ingesting", required = True)
+parser.add_argument("--splunk-host", type = str, help = "Hostname of Splunk instances we will be connecting to (default: localhost)", default = "localhost", required = False)
+parser.add_argument("--splunk-port", type = int, help = "TCP port Splunk instances we will be connecting to (default: 9997)", default = 9997, required = False)
+args = parser.parse_args()
+
+
+#
+# Turns a tweet into a string suitable for passing into Splunk
+#
+def getTweetString(tweet):
+
+	retval = tweet["date"]
+	retval += " username=\"%s\"" % tweet["username"]
+	retval += " tweet_id=\"%d\"" % tweet["tweet_id"]
+	#
+	# Replcae newlines with spaces, Splunk strongly prefers to have one event per line
+	#
+	tweet_string = tweet["tweet"].replace("\n", " ").replace("\r", " ")
+	retval += " tweet=\"%s\"" % tweet_string
+	retval += " sentiment=\"%s\"" % tweet["sentiment"]
+
+	score = json.loads(tweet["score"])
+	retval += " score_mixed=\"%.20f\"" % score["Mixed"]
+	retval += " score_negative=\"%.20f\"" % score["Negative"]
+	retval += " score_positive=\"%.20f\"" % score["Positive"]
+	retval += " score_neutral=\"%.20f\"" % score["Neutral"]
+
+	return(retval)
+
+
+#
+# Send our tweet off to Splunk
+#
+# @param string host Splunk host
+# @param integer port Splunk port
+# @param string splunk_string Event to send off to Splunk.  It should start with a timestamp and have key/value pairs.
+#
+def sendTweetToSplunk(host, port, splunk_string):
+
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect((host, port))
+	s.sendall(splunk_string.encode())
+	#
+	# Sending stuff over TCP to Splunk is a little weird, because it does not seem 
+	# to acknowledge stuff that's sent, so that's a little weird.  So there isn't 
+	# much I can do here, other than to close the connection.
+	#
+	s.close()
+
+
+#
+# Our main entry point
+#
+def main(args):
+
+	print("# ")
+	print("# Ingesting tweets from user '%s' to Splunk TCP port on %s:%d" % (
+		args.username, args.splunk_host, args.splunk_port))
+	print("# ")
+
+	#
+	# Set the database to return associative arrays
+	#
+	sql = db.db()
+	sql.conn.row_factory = sqlite3.Row
+
+	#
+	# Grab our tweets, turn them into strings, and send them off to Splunk!
+	#
+	query = ("SELECT rowid, * FROM tweets "
+		"WHERE username=? "
+                )
+	results = sql.execute(query, [ args.username ] )
+
+	count = 0
+	for row in results:
+		splunk_string = getTweetString(row)
+		sendTweetToSplunk(args.splunk_host, args.splunk_port, splunk_string)
+		count += 1
+	
+	print("# ")
+	print("# Total tweets ingested for user '%s': %d!" % (args.username, count))
+	print("# ")
+
+
+main(args)
+
+
