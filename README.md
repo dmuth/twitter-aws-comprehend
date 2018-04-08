@@ -79,6 +79,13 @@ run, that code will not overwrite the sentiement fields.  And once a tweet is an
 One place where this does break down is with Slplunk, since the data is fed in through raw TCP and Splunk does not seem to give any acknowledgement (don't know why...), running that script twice will result in duplicate events.  The way around that is to run a Splunk query like **index=main sourcetype=twitter username=dmuth | delete** before re-ingesting any data.  I'm not thrilled with this particular workflow, and am looking at some alternatives.  
 
 
+## Future TODO Items
+
+- Make tweet ingestion idempotent
+- Come up with a metric to measure profanity on an account, not just f-bombs
+- See about using Twitter's search API to get older tweets
+
+
 ## Contact
 
 I had fun writing this, and I hope you had enjoy using this.  If there are any issues, feel
