@@ -21,7 +21,7 @@ class db():
 		#
 		# Doing some type checking, as I got caught by this too many times.
 		#
-		if type(args) != type(None) and type(args) != type([]):
+		if type(args) != type(None) and type(args) != type([]) and type(args) != type(()):
 			raise("Second argument, if present, must be a list!")
 
 		if (args):	
