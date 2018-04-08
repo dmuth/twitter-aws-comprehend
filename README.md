@@ -45,6 +45,17 @@ The data is sent to Splunk over a raw TCP connection, so you'll want to configur
 
 <img src="./img/splunk-tcp-port.png" />
 
+You'll want to have this source saving to the **main** Index.
+
 
 ## Visualization 
+
+This is the most interesting part.  So far, we are making the following assumptions about Splunk:
+- Use of the **main** Index
+- Use of the Sourcetype **twitter**
+- Use of the Splunk app **Search**
+
+Assuming those are the case, you're good to go!  Just copy the file **splunk/twitter_activity_sentiment.xml** into **$SPLUNK_HOME/etc/apps/search/local/data/ui/views**, restart Splunk, and you should be all set!  Alternatively, a less convoluted way (which does not require restarting Splunk) would be to create a new dashboard, click **Edit**, click **Source**, and paste in the contents of **twitter_activity_sentiment.xml**.
+
+
 
