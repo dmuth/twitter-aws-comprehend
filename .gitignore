@@ -11,3 +11,7 @@ tweets.db
 # Python dev
 virtualenv/
 
+# Steve Jobs
+.DS_Store
+
+
