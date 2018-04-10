@@ -33,96 +33,98 @@ parser.add_argument("-n", "--num", type = int, help = "How many tweets to fetch?
 parser.add_argument("--re-auth", action = "store_true", help = "Re-authenticate against Twitter")
 args = parser.parse_args()
 
-#
-# Create our data object for writing to the data table.
-#
-sql = db.db()
-data = db.tables.data.data(sql)
-data_tweets = db.tables.tweets.data(sql)
 
 #
 # Fetch our data from the database.  If we don't have any data, then
 # go through the process of getting auth tokens, which is a somewhat involved
 # process which also includes opening up a web browser window. (ugh)
 #
-twitter_data = data.get("twitter_data")
+# @param object sql Our SQLite object
+# @param object data Our database object for the data table, which stores Twitter credentials.
+# @param boolean re_auth True if we want to delete the auth data and re-auth.
+#
+# @return object A SQLite object representing the row
+#
+def getTwitterData(sql, data, re_auth):
 
-if (not twitter_data or args.re_auth):
+	retval = data.get("twitter_data")
 
-	print("# ")
+	if (not retval or re_auth):
 
-	print("# ")
+		print("# ")
 
-	if not twitter_data:
-		print("# No Twitter credentials found!")
+		if not retval:
+			print("# No Twitter credentials found!")
 
-	if args.re_auth:
-		query = "DELETE FROM data WHERE key = 'twitter_data'"
-		sql.execute(query)
-		print("# Deleting and re-adding Twitter credentials...")
+		if re_auth:
+			query = "DELETE FROM data WHERE key = 'twitter_data'"
+			sql.execute(query)
+			print("# Deleting and re-adding Twitter credentials...")
 
-	print("# ")
-	print("# The first thing we're going to need to do is get your API Key and Secret")
-	print("# You will be taken to Twitter's Apps page, and create an app if you need to.")
-	print("# The app will only need read-only permissions.")
-	print("# ")
-	print("# ")
+		print("# ")
+		print("# The first thing we're going to need to do is get your API Key and Secret")
+		print("# You will be taken to Twitter's Apps page, and create an app if you need to.")
+		print("# The app will only need read-only permissions.")
+		print("# ")
+		print("# ")
 
-	url = "https://apps.twitter.com/"
-	input("Press [Enter] to open %s in your web browser! [Enter] " % url)
-	webbrowser.open(url)
+		url = "https://apps.twitter.com/"
+		input("Press [Enter] to open %s in your web browser! [Enter] " % url)
+		webbrowser.open(url)
 
-	app_key = input("Enter your App Key here: ")
-	app_secret = input("Enter your App Secret here: ")
+		app_key = input("Enter your App Key here: ")
+		app_secret = input("Enter your App Secret here: ")
 
-	twitter = twython.Twython(app_key, app_secret)
-	auth = twitter.get_authentication_tokens()
+		twitter = twython.Twython(app_key, app_secret)
+		auth = twitter.get_authentication_tokens()
 
-	auth_url = auth["auth_url"]
-	logger.debug("Auth URL: " + auth_url)
+		auth_url = auth["auth_url"]
+		logger.debug("Auth URL: " + auth_url)
 
-	print("# ")
-	print("# For the next step, we're going to open an authentication page on Twitter,")
-	print("# which will display a PIN.  Please enter that PIN below!")
-	print("# ")
+		print("# ")
+		print("# For the next step, we're going to open an authentication page on Twitter,")
+		print("# which will display a PIN.  Please enter that PIN below!")
+		print("# ")
 
-	input("Press [Enter] to open the auth page in your web browser! [Enter] ")
+		input("Press [Enter] to open the auth page in your web browser! [Enter] ")
 
-	webbrowser.open(auth_url)
-	oauth_verifier = input("Enter Your PIN: ")
+		webbrowser.open(auth_url)
+		oauth_verifier = input("Enter Your PIN: ")
 
-	oauth_token = auth['oauth_token']
-	oauth_token_secret = auth['oauth_token_secret']
-	logger.debug("OAUTH Token: " + oauth_token)
-	logger.debug("OAUTH Token Secret: " + oauth_token_secret)
+		oauth_token = auth['oauth_token']
+		oauth_token_secret = auth['oauth_token_secret']
+		logger.debug("OAUTH Token: " + oauth_token)
+		logger.debug("OAUTH Token Secret: " + oauth_token_secret)
 
-	twitter = twython.Twython(app_key, app_secret, oauth_token, oauth_token_secret)
+		twitter = twython.Twython(app_key, app_secret, oauth_token, oauth_token_secret)
 
-	try:
-		final_step = twitter.get_authorized_tokens(oauth_verifier)
+		try:
+			final_step = twitter.get_authorized_tokens(oauth_verifier)
 
-	except twython.exceptions.TwythonError as e:
-		print ("! ")
-		print ("! Caught twython.exceptions.TwythonError:", e)
-		print ("! ")
-		print ("! Did you enter the right PIN code?")
-		print ("! ")
-		exit(1)
+		except twython.exceptions.TwythonError as e:
+			print ("! ")
+			print ("! Caught twython.exceptions.TwythonError:", e)
+			print ("! ")
+			print ("! Did you enter the right PIN code?")
+			print ("! ")
+			sys.exit(1)
 
-	final_oauth_token = final_step['oauth_token']
-	final_oauth_token_secret = final_step['oauth_token_secret']
-	logger.debug("Final OUATH token: " + final_oauth_token)
-	logger.debug("Final OAUTH token secret: " + final_oauth_token_secret)
+		final_oauth_token = final_step['oauth_token']
+		final_oauth_token_secret = final_step['oauth_token_secret']
+		logger.debug("Final OUATH token: " + final_oauth_token)
+		logger.debug("Final OAUTH token secret: " + final_oauth_token_secret)
 
-	twitter_data = {
-		"app_key": app_key,
-		"app_secret": app_secret,
-		"final_oauth_token": final_oauth_token,
-		"final_oauth_token_secret": final_oauth_token_secret,
-		"created": int(time.time()),
-		}
+		retval = {
+			"app_key": app_key,
+			"app_secret": app_secret,
+			"final_oauth_token": final_oauth_token,
+			"final_oauth_token_secret": final_oauth_token_secret,
+			"created": int(time.time()),
+			}
 
-	data.put("twitter_data", twitter_data)
+		data.put("twitter_data", retval)
+
+	return(retval)
 
 
 #
@@ -195,11 +197,12 @@ def getTweets(twitter, username, count, **kwargs):
 # @param object twitter Our Twitter object
 # @param string username The username to fetch tweets from
 # @param integer num_tweets_left How many tweets to fetch?
+# @param object data_tweets Database object to write tweets
 #
 # @return tuple A tuple of the number of tweets written to the database 
 #	and how many tweets are left to fetch.
 #
-def getTweetsLoop(twitter, username, num_tweets_left):
+def getTweetsLoop(twitter, username, num_tweets_left, data_tweets):
 
 	num_tweets_written = 0
 	num_passes_zero_tweets = 5
@@ -253,6 +256,15 @@ def getTweetsLoop(twitter, username, num_tweets_left):
 def main(args):
 
 	#
+	# Create our data object for writing to the data table.
+	#
+	sql = db.db()
+	data = db.tables.data.data(sql)
+	data_tweets = db.tables.tweets.data(sql)
+
+	twitter_data = getTwitterData(sql, data, args.re_auth)
+
+	#
 	# Verify our Twitter credentials
 	#
 	twitter = twython.Twython(twitter_data["app_key"], twitter_data["app_secret"], 
@@ -272,7 +284,7 @@ def main(args):
 	tweets = []
 	num_tweets_left = args.num
 
-	(num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left)
+	(num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left, data_tweets)
 	logger.info("Total tweets written: %d" % num_tweets_written)
 
 
