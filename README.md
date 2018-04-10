@@ -73,7 +73,7 @@ Alternatively, a less convoluted way (which does not require restarting Splunk) 
 
 I am a HUGE fan <a href="https://en.wikipedia.org/wiki/Idempotence">of Idempotency</a>.  Especially because
 AWS Comprehend costs money!  Once I analyze a tweet, I never want to analyze it again.  So I made a conscious
-choice to build my code that way.  So, for example, if a tweet is analyzed and later the script **0-fetch-tweets.py** is 
+choice to build my code that way.  So, for example, if a tweet is analyzed and later the script **0-fetch-tweets** is 
 run, that code will not overwrite the sentiement fields.  And once a tweet is analyzed by **1-analyze-sentiemtn**, it will never be analyzed again!
 
 One place where this does break down is with Slplunk, since the data is fed in through raw TCP and Splunk does not seem to give any acknowledgement (don't know why...), running that script twice will result in duplicate events.  The way around that is to run a Splunk query like **index=main sourcetype=twitter username=dmuth | delete** before re-ingesting any data.  I'm not thrilled with this particular workflow, and am looking at some alternatives.  
