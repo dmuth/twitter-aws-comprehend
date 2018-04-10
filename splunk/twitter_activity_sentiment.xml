@@ -15,6 +15,13 @@
         <latest></latest>
       </search>
     </input>
+    <input type="time" token="field1">
+      <label></label>
+      <default>
+        <earliest>-1y</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
   </fieldset>
   <row>
     <panel>
@@ -25,8 +32,8 @@
 | tail 1
 | stats min(_time) AS time
 | eval time=strftime(time, "%b %d, %Y %H:%M:%S")</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">value</option>
@@ -56,8 +63,8 @@
 | head 1
 | stats max(_time) AS time
 | eval time=strftime(time, "%b %d, %Y %H:%M:%S")</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">value</option>
@@ -85,8 +92,8 @@
         <search>
           <query>index=main sourcetype=twitter username=$username$
 | stats count</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">value</option>
@@ -117,8 +124,8 @@
           <query>index=main sourcetype=twitter username=$username$ 
 | where in (sentiment, "POSITIVE", "NEUTRAL", "NEGATIVE", "MIXED")
 | timechart span=1w count(sentiment) by sentiment</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.seriesColors">[0xffff88,0xFF4444,0xcccc88, 0x44ff44]</option>
@@ -162,8 +169,8 @@
         <search>
           <query>index=main sourcetype=twitter username=$username$ tweet="*fuck*"
 | stats count</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -212,8 +219,8 @@
 | eval pct_negative=100 * (negative_count / total)
 | eval happiness_index = pct_positive - pct_negative
 | fields happiness_index</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorMode">none</option>
@@ -239,8 +246,8 @@
 | eval _time=strftime(_time, "%b %d, %Y %H:%M:%S")
 | table _time tweet score_positive
 | rename _time as Date, tweet as Tweet, score_positive as Score</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
@@ -263,8 +270,8 @@
 | eval _time=strftime(_time, "%b %d, %Y %H:%M:%S")
 | table _time tweet score_negative
 | rename _time as Date, tweet as Tweet, score_negative as Score</query>
-          <earliest>0</earliest>
-          <latest></latest>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="count">10</option>
