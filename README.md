@@ -17,7 +17,7 @@ So I built this app to download user timelines from Twitter, send them to AWS fo
 
 ### Downloading Tweets
 
-You'll want to start off by running the script **./0-fetch-tweets.py -u username -n num_tweets_to_download** to download Tweets via Twitter's API.
+You'll want to start off by running the script **./0-fetch-tweets -u username -n num_tweets_to_download** to download Tweets via Twitter's API.
 When you first run the script, it will notice the lack of credentials and send you over to Twitter's App page,
 where you'll need to create an app.  Then grab the App Key and App Secret and enter them when the script prompts you.
 Next, you'll be sent over to Twitter one more time and will receive a PIN to enter in the script.  Do so,
