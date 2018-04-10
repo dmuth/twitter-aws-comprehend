@@ -199,7 +199,7 @@ def getTweets(twitter, username, count, **kwargs):
 # @param integer num_tweets_left How many tweets to fetch?
 # @param object data_tweets Database object to write tweets
 #
-# @return tuple A tuple of the number of tweets written to the database 
+# @return tuple A tuple of the last Tweet ID, number of tweets written to the database 
 #	and how many tweets are left to fetch.
 #
 def getTweetsLoop(twitter, username, num_tweets_left, data_tweets):
@@ -247,7 +247,7 @@ def getTweetsLoop(twitter, username, num_tweets_left, data_tweets):
 		if (num_tweets_left <= 0):
 			break
 
-	return(num_tweets_written, num_tweets_left)
+	return(last_id, num_tweets_written, num_tweets_left)
 
 
 #
@@ -281,10 +281,9 @@ def main(args):
 	print("# Fetching %d tweets for user '%s'!" % (args.num, args.username))
 	print("# ")
 
-	tweets = []
 	num_tweets_left = args.num
 
-	(num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left, data_tweets)
+	(last_id, num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left, data_tweets)
 	logger.info("Total tweets written: %d" % num_tweets_written)
 
 
