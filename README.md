@@ -1,9 +1,18 @@
 # Twitter AWS Comprehend
+<img src="./img/dog-rates-twitter-sentiment-dashboard.png" width="400" align="right" />
 
 I recently learned of <a href="https://aws.amazon.com/comprehend/">Amazon Comprehend</a> and wanted
 to play around with its sentiment analysis.
 
-So I built this app to download user timelines from Twitter, send them to AWS for analysis, and visualize them in Splunk.
+So I built this app to download user timelines from Twitter, send them to AWS for analysis, and visualize them in Splunk.  The following metrics are reported:
+
+- Start and end dates for tweets
+- Number of tweets
+- A graph of "Sentiment Over Time"
+- Number of F-bombs used
+- Net Happiness Index (percent of happy tweets minus precent of unhappy tweets)
+- Top Positive and Negative tweets
+
 
 ## Requirements
 
@@ -55,7 +64,34 @@ This is the most interesting part.  So far, we are making the following assumpti
 - Use of the Sourcetype **twitter**
 - Use of the Splunk app **Search**
 
-Assuming those are the case, you're good to go!  Just copy the file **splunk/twitter_activity_sentiment.xml** into **$SPLUNK_HOME/etc/apps/search/local/data/ui/views**, restart Splunk, and you should be all set!  Alternatively, a less convoluted way (which does not require restarting Splunk) would be to create a new dashboard, click **Edit**, click **Source**, and paste in the contents of **twitter_activity_sentiment.xml**.
+Assuming those are the case, you're good to go!  Just copy the file **splunk/twitter_activity_sentiment.xml** into **$SPLUNK_HOME/etc/apps/search/local/data/ui/views**, restart Splunk, and you should be all set!  
+
+Alternatively, a less convoluted way (which does not require restarting Splunk) would be to create a new dashboard, click **Edit**, click **Source**, and paste in the contents of **twitter_activity_sentiment.xml**.
+
+
+## A Word on Idempotency
+
+I am a HUGE fan <a href="https://en.wikipedia.org/wiki/Idempotence">of Idempotency</a>.  Especially because
+AWS Comprehend costs money!  Once I analyze a tweet, I never want to analyze it again.  So I made a conscious
+choice to build my code that way.  So, for example, if a tweet is analyzed and later the script **0-fetch-tweets.py** is 
+run, that code will not overwrite the sentiement fields.  And once a tweet is analyzed by **1-analyze-sentiemtn**, it will never be analyzed again!
+
+One place where this does break down is with Slplunk, since the data is fed in through raw TCP and Splunk does not seem to give any acknowledgement (don't know why...), running that script twice will result in duplicate events.  The way around that is to run a Splunk query like **index=main sourcetype=twitter username=dmuth | delete** before re-ingesting any data.  I'm not thrilled with this particular workflow, and am looking at some alternatives.  
+
+
+## Future TODO Items
+
+- Make tweet ingestion idempotent
+- Come up with a metric to measure profanity on an account, not just f-bombs
+- See about using Twitter's search API to get older tweets
+
+
+## Contact
+
+I had fun writing this, and I hope you had enjoy using this.  If there are any issues, feel
+free to file an issue against this project, <a href="http://twitter.com/dmuth">hit me up on Twitter</a>
+<a href="http://facebook.com/dmuth">or Facebook</a>, or drop me a line: **dmuth AT dmuth DOT org**.
+
 
 
 
