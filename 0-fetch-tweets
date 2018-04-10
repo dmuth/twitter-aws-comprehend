@@ -192,6 +192,13 @@ def getTweets(twitter, username, count, **kwargs):
 #
 # Fetch tweets in a loop until we hit our max.
 #
+# @param object twitter Our Twitter object
+# @param string username The username to fetch tweets from
+# @param integer num_tweets_left How many tweets to fetch?
+#
+# @return tuple A tuple of the number of tweets written to the database 
+#	and how many tweets are left to fetch.
+#
 def getTweetsLoop(twitter, username, num_tweets_left):
 
 	num_tweets_written = 0
@@ -241,30 +248,34 @@ def getTweetsLoop(twitter, username, num_tweets_left):
 
 
 #
-# Verify our Twitter credentials
+# Our main function.
 #
-twitter = twython.Twython(twitter_data["app_key"], twitter_data["app_secret"], twitter_data["final_oauth_token"], twitter_data["final_oauth_token_secret"])
+def main(args):
 
-creds = twitter.verify_credentials()
-rate_limit = twitter.get_lastfunction_header('x-rate-limit-remaining')
-logger.info("Rate limit left for verifying credentials: " + rate_limit)
+	#
+	# Verify our Twitter credentials
+	#
+	twitter = twython.Twython(twitter_data["app_key"], twitter_data["app_secret"], 
+		twitter_data["final_oauth_token"], twitter_data["final_oauth_token_secret"])
 
-screen_name = creds["screen_name"]
-logger.info("My screen name is: " + screen_name)
+	creds = twitter.verify_credentials()
+	rate_limit = twitter.get_lastfunction_header('x-rate-limit-remaining')
+	logger.info("Rate limit left for verifying credentials: " + rate_limit)
+
+	screen_name = creds["screen_name"]
+	logger.info("My screen name is: " + screen_name)
+
+	print("# ")
+	print("# Fetching %d tweets for user '%s'!" % (args.num, args.username))
+	print("# ")
+
+	tweets = []
+	num_tweets_left = args.num
+
+	(num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left)
+	logger.info("Total tweets written: %d" % num_tweets_written)
 
 
-print("# ")
-print("# Fetching %d tweets for user '%s'!" % (args.num, args.username))
-print("# ")
-
-tweets = []
-num_tweets_left = args.num
-
-
-	
-(num_tweets_written, num_tweets_left) = getTweetsLoop(twitter, args.username, num_tweets_left)
-logger.info("Total tweets written: %d" % num_tweets_written)
-
-
+main(args)
 
 
