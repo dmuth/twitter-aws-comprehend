@@ -1,5 +1,24 @@
 <form>
   <label>Twitter Activity Sentiment</label>
+  <search>
+    <!-- 
+    I have no idea why I had to specify profile_image, as all events had it, 
+    but the field would not be populated without.  Annoying.
+    -->
+    <query>index=main sourcetype=twitter username=$username$ profile_image=* |  head 1</query>
+    <earliest>$field1.earliest$</earliest>
+    <latest>$field1.latest$</latest>
+    <!-- Use the following search events to access job properties, and set tokens that can be accessible throughout the page -->
+    <!-- Progress event has access to job properties only (not first result row) -->
+    <progress>
+      <set token="result_username">@$result.username$</set>
+      <set token="result_profile_image">$result.profile_image$</set>
+    </progress>
+    <cancelled>
+      <set token="result_username"></set>
+      <set token="result_image"></set>
+    </cancelled>
+  </search>
   <fieldset submitButton="false">
     <input type="dropdown" token="username" searchWhenChanged="true">
       <label>Username</label>
@@ -39,6 +58,7 @@
         <option name="colorBy">value</option>
         <option name="colorMode">none</option>
         <option name="drilldown">none</option>
+        <option name="height">89</option>
         <option name="numberPrecision">0</option>
         <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
         <option name="rangeValues">[0,30,70,100]</option>
@@ -70,6 +90,7 @@
         <option name="colorBy">value</option>
         <option name="colorMode">none</option>
         <option name="drilldown">none</option>
+        <option name="height">89</option>
         <option name="numberPrecision">0</option>
         <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
         <option name="rangeValues">[0,30,70,100]</option>
@@ -99,6 +120,7 @@
         <option name="colorBy">value</option>
         <option name="colorMode">none</option>
         <option name="drilldown">none</option>
+        <option name="height">90</option>
         <option name="numberPrecision">0</option>
         <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
         <option name="rangeValues">[0,30,70,100]</option>
@@ -114,6 +136,20 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
       </single>
+    </panel>
+    <panel>
+      <title>Twitter User</title>
+      <html>
+          
+          <img src="$result_profile_image$" height="100" width="100"/>
+          <br/>
+          <br/>
+          <text style="letter-spacing: normal; font-weight: bold; fill: rgb(51, 51, 51); opacity: 1; font-size: 24px; vertical-align: top; ">
+          $result_username$
+          </text>
+           
+          
+        </html>
     </panel>
   </row>
   <row>
@@ -203,6 +239,7 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">right</option>
         <option name="charting.lineWidth">2</option>
+        <option name="height">241</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
@@ -225,6 +262,7 @@
         </search>
         <option name="colorMode">none</option>
         <option name="drilldown">none</option>
+        <option name="height">171</option>
         <option name="numberPrecision">0.00</option>
         <option name="rangeColors">["0xd93f3c","0xd98888","0x88a688","0x65a637"]</option>
         <option name="rangeValues">[-10,0,10]</option>
