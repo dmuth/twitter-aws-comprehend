@@ -35,6 +35,8 @@ def getTweetString(tweet):
 	retval = tweet["date"]
 	retval += " username=\"%s\"" % tweet["username"]
 	retval += " tweet_id=\"%d\"" % tweet["tweet_id"]
+	retval += " profile_image=\"%s\"" % tweet["profile_image"]
+
 	#
 	# Replcae newlines with spaces, Splunk strongly prefers to have one event per line
 	#
