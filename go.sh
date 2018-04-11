@@ -26,6 +26,16 @@ USERNAME=$1
 
 ./0-fetch-tweets -u $USERNAME -n 3200
 ./1-analyze-sentiment -u $USERNAME -n 3200
+
+#
+# Delete all existing Splunk events for this user.
+# Obviously, this is specific to my Mac.
+#
+echo "# "
+echo "# Deleting all Splunk events for this user..."
+echo "# "
+/Applications/Splunk/bin/splunk search "index=main sourcetype=twitter username=${USERNAME} |delete"
+
 ./2-ingest-into-splunk -u $USERNAME
 
 
