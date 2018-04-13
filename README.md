@@ -16,9 +16,7 @@ So I built this app to download user timelines from Twitter, send them to AWS fo
 
 ## Screenshots
 
-<img src="./img/obama-twitter-sentiment-dashboard.png" width="300" />
-<img src="./img/snowden-twitter-sentiment-dashboard.png" width="300" />
-<img src="./img/splunk-twitter-sentiment-dashboard.png" width="300" />
+<a href="./img/obama-twitter-sentiment-dashboard.png"><img src="./img/obama-twitter-sentiment-dashboard.png" width="250" /></a> <a href="./img/snowden-twitter-sentiment-dashboard.png"><img src="./img/snowden-twitter-sentiment-dashboard.png" width="250" /></a> <a href="./img/phillies-twitter-sentiment-dashboard.png"><img src="./img/phillies-twitter-sentiment-dashboard.png" width="250" /></a>
 
 
 ## Requirements
