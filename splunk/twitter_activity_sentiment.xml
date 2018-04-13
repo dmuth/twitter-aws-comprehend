@@ -41,6 +41,14 @@
         <latest>now</latest>
       </default>
     </input>
+    <input type="dropdown" token="span" searchWhenChanged="true">
+      <label>Span for Sentiment Over Time</label>
+      <choice value="1d">Day</choice>
+      <choice value="1w">Week</choice>
+      <choice value="1mon">Month</choice>
+      <default>1w</default>
+      <initialValue>1w</initialValue>
+    </input>
   </fieldset>
   <row>
     <panel>
@@ -159,7 +167,7 @@
         <search>
           <query>index=main sourcetype=twitter username=$username$ 
 | where in (sentiment, "POSITIVE", "NEUTRAL", "NEGATIVE", "MIXED")
-| timechart span=1w count(sentiment) by sentiment</query>
+| timechart span=$span$ count(sentiment) by sentiment</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
