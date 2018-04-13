@@ -1,5 +1,5 @@
+
 # Twitter AWS Comprehend
-<img src="./img/dog-rates-twitter-sentiment-dashboard.png" width="400" align="right" />
 
 I recently learned of <a href="https://aws.amazon.com/comprehend/">Amazon Comprehend</a> and wanted
 to play around with its sentiment analysis.
@@ -12,6 +12,11 @@ So I built this app to download user timelines from Twitter, send them to AWS fo
 - Number of F-bombs used
 - Net Happiness Index (percent of happy tweets minus precent of unhappy tweets)
 - Top Positive and Negative tweets
+
+
+## Screenshots
+
+<a href="./img/obama-twitter-sentiment-dashboard.png"><img src="./img/obama-twitter-sentiment-dashboard.png" width="250" /></a> <a href="./img/snowden-twitter-sentiment-dashboard.png"><img src="./img/snowden-twitter-sentiment-dashboard.png" width="250" /></a> <a href="./img/phillies-twitter-sentiment-dashboard.png"><img src="./img/phillies-twitter-sentiment-dashboard.png" width="250" /></a>
 
 
 ## Requirements
