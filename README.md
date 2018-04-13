@@ -18,7 +18,7 @@ So I built this app to download user timelines from Twitter, send them to AWS fo
 
 <a href="./img/splunk-twitter-sentiment-dashboard.png"><img src="./img/splunk-twitter-sentiment-dashboard.png" width="275" /></a> <a href="./img/obama-twitter-sentiment-dashboard.png"><img src="./img/obama-twitter-sentiment-dashboard.png" width="275" /></a>  <a href="./img/phillies-twitter-sentiment-dashboard.png"><img src="./img/phillies-twitter-sentiment-dashboard.png" width="275" /></a>
 
-Additional screenshots <a href="tree/master/img">are available in the img/ directory</a>.
+Additional screenshots <a href="img">are available in the img/ directory</a>.
 
 
 ## Requirements
