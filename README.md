@@ -90,8 +90,8 @@ One place where this does break down is with Slplunk, since the data is fed in t
 
 ## Future TODO Items
 
-~~- Make tweet ingestion idempotent~~
-~~- See about using Twitter's search API to get older tweets~~ Seriously, Twitter.  Let us get more than 3,200 Tweets through your API!
+- ~~Make tweet ingestion idempotent~~
+- ~~See about using Twitter's search API to get older tweets~~ Seriously, Twitter.  Let us get more than 3,200 Tweets through your API!
 - Come up with a metric to measure profanity on an account, not just f-bombs
 
 
