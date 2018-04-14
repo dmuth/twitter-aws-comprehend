@@ -23,6 +23,8 @@ Additional screenshots <a href="img">are available in the img/ directory</a>.
 
 ## Requirements
 
+- An AWS Account
+- The <a href="https://docs.aws.amazon.com/cli/latest/userguide/installing.html">AWS Command Line Interface installed and configured</a>
 - Python 3
 - Run the command `pip install -r requirements.txt` to download all required packages
 - A Twitter app created at <a href="https://apps.twitter.com/">https://apps.twitter.com/</a>.  Read-only access is fine.
