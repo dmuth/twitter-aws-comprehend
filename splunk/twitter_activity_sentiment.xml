@@ -46,8 +46,25 @@
       <choice value="1d">Day</choice>
       <choice value="1w">Week</choice>
       <choice value="1mon">Month</choice>
+      <choice value="2mon">2 Months</choice>
+      <choice value="3mon">3 Months</choice>
+      <choice value="6mon">6 Months</choice>
+      <choice value="1y">1 Year</choice>
+
       <default>1w</default>
       <initialValue>1w</initialValue>
+    </input>
+    <input type="dropdown" token="span_happiness" searchWhenChanged="true">
+      <label>Span for Happiness Index</label>
+      <choice value="1d">Day</choice>
+      <choice value="1w">Week</choice>
+      <choice value="1mon">Month</choice>
+      <choice value="2mon">2 Months</choice>
+      <choice value="3mon">3 Months</choice>
+      <choice value="6mon">6 Months</choice>
+      <choice value="1y">1 Year</choice>
+      <default>3mon</default>
+      <initialValue>3mon</initialValue>
     </input>
   </fieldset>
   <row>
@@ -172,10 +189,9 @@
           <latest>$field1.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
-        <option name="charting.seriesColors">[0xffff88,0xFF4444,0xcccc88, 0x44ff44]</option>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">45</option>
-        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.abbreviation">none</option>
@@ -189,7 +205,7 @@
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
-        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.nullValueMode">connect</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">stacked100</option>
@@ -201,6 +217,10 @@
         <option name="charting.legend.mode">standard</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.lineWidth">2</option>
+        <!--
+        <option name="charting.seriesColors">[0xFF4444,0xcccc88, 0x44ff44]</option>
+        -->
+        <option name="charting.seriesColors">[0xffff88,0xFF4444,0xcccc88, 0x44ff44]</option>
         <option name="refresh.display">progressbar</option>
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
@@ -258,24 +278,27 @@
       <title>Net Happiness Index</title>
       <single>
         <search>
-          <query>index=main sourcetype=twitter username=$username$
-| stats count(eval(sentiment="POSITIVE")) AS positive_count, count(eval(sentiment="NEGATIVE")) AS negative_count, count as total
+          <query>index=main sourcetype=twitter username=$username$ 
+| timechart span=$span_happiness$ count(eval(sentiment="POSITIVE")) AS positive_count, count(eval(sentiment="NEGATIVE")) AS negative_count, count as total
 | eval pct_positive=100 * (positive_count / total)
 | eval pct_negative=100 * (negative_count / total)
 | eval happiness_index = pct_positive - pct_negative
 | fields happiness_index</query>
           <earliest>$field1.earliest$</earliest>
           <latest>$field1.latest$</latest>
-          <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorMode">none</option>
         <option name="drilldown">none</option>
-        <option name="height">171</option>
+        <option name="height">250</option>
         <option name="numberPrecision">0.00</option>
         <option name="rangeColors">["0xd93f3c","0xd98888","0x88a688","0x65a637"]</option>
         <option name="rangeValues">[-10,0,10]</option>
         <option name="refresh.display">progressbar</option>
-        <option name="underLabel">Percentage of positive tweets minus percentage of negative tweets</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">auto</option>
+        <option name="underLabel">Percent of positive Tweets minus percentage of negative tweets</option>
         <option name="unit">%</option>
         <option name="useColors">1</option>
       </single>
