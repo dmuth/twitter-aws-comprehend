@@ -50,7 +50,6 @@
       <choice value="3mon">3 Months</choice>
       <choice value="6mon">6 Months</choice>
       <choice value="1y">1 Year</choice>
-
       <default>1w</default>
       <initialValue>1w</initialValue>
     </input>
@@ -298,7 +297,7 @@
         <option name="showTrendIndicator">1</option>
         <option name="trendDisplayMode">absolute</option>
         <option name="trendInterval">auto</option>
-        <option name="underLabel">Percent of positive Tweets minus percentage of negative tweets</option>
+        <option name="underLabel">Percent of positive Tweets minus percentage of negative Tweets</option>
         <option name="unit">%</option>
         <option name="useColors">1</option>
       </single>
