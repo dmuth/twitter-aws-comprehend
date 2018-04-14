@@ -45,6 +45,7 @@
       <label>Span for Sentiment Over Time</label>
       <choice value="1d">Day</choice>
       <choice value="1w">Week</choice>
+      <choice value="2w">2 Weeks</choice>
       <choice value="1mon">Month</choice>
       <choice value="2mon">2 Months</choice>
       <choice value="3mon">3 Months</choice>
@@ -57,6 +58,7 @@
       <label>Span for Happiness Index</label>
       <choice value="1d">Day</choice>
       <choice value="1w">Week</choice>
+      <choice value="2w">2 Weeks</choice>
       <choice value="1mon">Month</choice>
       <choice value="2mon">2 Months</choice>
       <choice value="3mon">3 Months</choice>
